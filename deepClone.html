@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8" />
+		<title>深度克隆</title>
+	</head>
+	<body>
+		<script type="text/javascript">
+			let userInfo = {
+				name: '小明',
+				sex: '男',
+				age: 18,
+				height: 170,
+				weight: 140,
+				friends: ['小红','小李','老刘'],
+				pets: {
+					breed: 'dog',
+					sex: 'male',
+					age: 2,
+					weight: 20
+				}
+			};
+			// 该函数 deepClone() 用于克隆数组或对象
+			// @target 数组或对象
+			function deepClone(target) {
+				function isArray(options) {  // 用于判断 target 是否是数组
+					let type = Object.prototype.toString.call(options).slice(8,-1);
+					return type === 'Array' ? true : false;
+				}
+				function isObject(options) {  // 用于判断 target 是否是对象
+					let type = Object.prototype.toString.call(options).slice(8,-1);
+					return type === 'Object' ? true : false;
+				}
+				if(isArray(target)) {
+					let container = [];
+					for(let i = 0; i < target.length; i++) {
+						if(isArray(target[i]) || isObject(target[i])) {
+							container.push(deepClone(target[i]));
+							continue;
+						}
+						container.push(target[i]);
+					}
+					return container;  // 返回创建的数组对象
+				};
+				if(isObject(target)) {
+					let container = {};
+					let array = Object.keys(target);
+					for(let i = 0; i<array.length; i++) {
+						if(isArray(target[array[i]]) || isObject(target[array[i]])) {
+							container[array[i]] = deepClone(target[array[i]]);
+							continue;
+						}
+						container[array[i]] = target[array[i]];
+					}
+					return container;  // 返回创建的一般对象
+				};
+				return target;  // 如果 target 不是数组或对象，直接返回
+			}
+			let result = deepClone(userInfo)
+			console.log(result);
+		</script>
+	</body>
+</html>
