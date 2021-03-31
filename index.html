@@ -7,5 +7,59 @@
 	</head>
 	<body>
 		<h1>这是我的第一个网页</h1>
+		<script>
+			
+			function deepClone(target,map = new Map()) {
+				function getType(target){
+					return Object.prototype.toString.call(target).slice(8,-1);
+				}
+				if(map.get(target)) return target;
+				let targetType = getType(target);
+				if(targetType === 'Array') {
+					let container = [];
+					target.forEach(item => {
+						let itemType = getType(item);
+						if(itemType === 'Object' || itemType === 'Array') {
+							map.set(item,'arrayMap');
+							container.push(deepClone(item,map));
+						}else{
+							container.push(item);
+						}
+					});
+					return container;
+				}
+				
+				if(targetType === 'Object') {
+					let container = {};
+					Object.keys(target).forEach(item => {
+						let itemType = getType(target[item]);
+						if(itemType === 'Object' || itemType === 'Array') {
+							map.set(item,'objectMap');
+							container[item] = deepClone(target[item]);
+						}else {
+							container[item] = target[item]
+						}
+					});
+					return container;
+				}
+				
+				return target;  // 基本类型值 与 函数
+			}
+			
+			// 测试循环引用,结果是成功的
+			
+			let obj = {
+				info: {name:'小明'},
+				list:['大明']
+			}
+			let array = ['小红'];
+			let o = {name:'xxx',array};
+			array.push(o);
+			obj.arr = array;
+			
+			let result = deepClone(obj);
+			console.log(result,result === obj)
+			
+		</script>
 	</body>
 </html>
